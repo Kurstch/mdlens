@@ -40,7 +40,7 @@ function File:analyze(filepath)
         local heading = Heading:analyze(headings, line, text)
         local link    = Link:analyze(filepath, line, text)
 
-        if heading ~= nil then heading[line] = heading end
+        if heading ~= nil then headings[line] = heading end
         if link ~= nil then links[line] = link end
     end
 
