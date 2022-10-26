@@ -1,8 +1,11 @@
 local util    = require("mdlens.util")
+local Link    = require("mdlens.Link")
 local Heading = require("mdlens.Heading")
 
 ---@alias headings
 ---| { [number]: Heading }
+---@alias links
+---| { [number]: Link }
 
 ---@class File
 ---@field filepath string
@@ -16,10 +19,11 @@ end
 
 ---@param filepath string
 ---@param headings headings
-function File:new(filepath, headings)
+function File:new(filepath, headings, links)
     local obj = {
         filepath = filepath,
         headings = headings,
+        links    = links,
     }
 
     setmetatable(obj, File)
@@ -27,24 +31,20 @@ function File:new(filepath, headings)
     return obj
 end
 
---- Finds all headings in the given file
---- @param lines string[] An array of lines from the file, you can use `io.lines()`
---- @return headings
-local function find_headings(lines)
+function File:analyze(filepath)
+    local lines = util.read_file(filepath)
     local headings = {}
+    local links = {}
 
     for line, text in pairs(lines) do
         local heading = Heading:analyze(headings, line, text)
-        if heading ~= nil then headings[line] = heading end
+        local link    = Link:analyze(filepath, line, text)
+
+        if heading ~= nil then heading[line] = heading end
+        if link ~= nil then links[line] = link end
     end
 
-    return headings
-end
-
-function File:analyze(filepath)
-    local lines = util.read_file(filepath)
-    local headings = find_headings(lines)
-    return File:new(filepath, headings)
+    return File:new(filepath, headings, links)
 end
 
 return File
