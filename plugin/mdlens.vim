@@ -1,4 +1,4 @@
 highlight default link MDLens Comment
 
-autocmd CursorHold  *.md lua require("mdlens.hint").hint()
-autocmd CursorHoldI *.md lua require("mdlens.hint").hint()
+autocmd CursorMoved  *.md lua require("mdlens.hint").hint()
+autocmd CursorMovedI *.md lua require("mdlens.hint").hint()
