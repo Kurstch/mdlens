@@ -35,7 +35,7 @@ function Workspace:analyze(path)
     local files = {}
 
     for _, filepath in pairs(scan_res) do
-        files[filepath] = File:new(filepath)
+        files[filepath] = File:analyze(filepath)
     end
 
     return Workspace.new(path, files)
