@@ -10,6 +10,7 @@ local Heading = require("mdlens.Heading")
 ---@class File
 ---@field filepath string
 ---@field headings headings
+---@field links    links
 local File = {}
 
 File.__index = function(_, k)
@@ -45,6 +46,22 @@ function File:analyze(filepath)
     end
 
     return File:new(filepath, headings, links)
+end
+
+---@return Heading | nil
+function File:current_heading()
+    local current_line    = vim.api.nvim_win_get_cursor(0)[1]
+    local current_heading = nil
+
+    for _, h in pairs(self.headings) do
+        if h.line <= current_line then
+            if current_heading ~= nil then
+                if current_heading.line < h.line then current_heading = h end
+            else current_heading = h end
+        end
+    end
+
+    return current_heading
 end
 
 return File
