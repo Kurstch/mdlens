@@ -67,4 +67,22 @@ function Link:analyze(filepath, line, text)
     return nil
 end
 
+---Checks wether this link is pointing to a heading
+---
+---@param  filepath string  The file where the heading is located
+---@param  heading  Heading The heading text
+---@return boolean
+function Link:points_to_heading(filepath, heading)
+    local path, header = self.href:match("(.*)(#.+)")
+
+    if header == nil then return false end
+    if path:len() ~= 0 and path ~= filepath then return false end
+
+    local heading_text = heading:normalize()
+
+    if header == heading_text then return true end
+
+    return false
+end
+
 return Link

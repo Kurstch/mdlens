@@ -1,4 +1,5 @@
-local util = require("mdlens.util")
+local state = require("mdlens.state")
+local util  = require("mdlens.util")
 
 ---Represents a heading in a markdown file.
 ---The parent field points to the line number of the parent heading (i.e. ## h2 > ## h1),
@@ -69,6 +70,37 @@ function Heading:analyze(headings, line, text)
     end
 
     return nil
+end
+
+---Format heading text to a link compatible version.
+---
+---@return string
+function Heading:normalize()
+    local text = self.text
+    local hash = text:match("#+")
+
+    text = text:lower()
+    text = text:gsub(hash, "#")
+    text = text:gsub(" ", "", 1)
+    text = text:gsub(" ", "-")
+
+    return text
+end
+
+---@param file File
+---@return Link[]
+function Heading:find_all_references_to_self(file)
+    local references = {}
+    for _, w in pairs(state._workspaces) do
+        for _, f in pairs(w.files) do
+            for _, l in pairs(f.links) do
+                if l:points_to_heading(file.filepath, self) then
+                    table.insert(references, l)
+                end
+            end
+        end
+    end
+    return references
 end
 
 return Heading
