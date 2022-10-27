@@ -23,7 +23,7 @@ end
 --- @return Workspace, File | nil, nil
 function M.find_file_from_workspaces(filepath)
     for _, w in pairs(state._workspaces) do
-        local file = w[filepath]
+        local file = w.files[filepath]
         if file ~= nil then return w, file end
     end
     return nil, nil
